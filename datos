@@ -1,16 +1,6 @@
-#Equipos
-Granada Lions
-Fuengirola Potros
-Almería Barbarians
-Sevilla Linces
-Córdoba Golden Bulls
-Aljarafe Blue Devils
-
-#Matriz de costes
-0	310 320 510 400 530
-310 0 505 470 380 505
-320 505 0 815 720 850
-510 470 815 0 290 50 
-400 380 720 290 0 335
-530 505 850 50 335 0  
-
+Granada Lions	0
+Fuengirola Potros	1
+Almería Barbarians	2
+Sevilla Linces	3
+Córdoba Golden Bulls	4
+Aljarafe Blue Devils	5
