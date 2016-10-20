@@ -2,16 +2,15 @@ from Equipos import Equipo
 from Calendario import Calendario
 import numpy
 import itertools
+import xlsxwriter
 
 def cargaDatos():
 
 	#Abrimos el archivo que contiene los datos
-	
-	global matriz
-	global ciudades
 
 	ciudades = cargaCiudades('datos')
 	matriz = cargaMatriz('costes')
+	return ciudades,matriz
 
 def cargaCiudades(nombre):
 
@@ -25,8 +24,7 @@ def cargaCiudades(nombre):
 
 def cargaMatriz(nombre):
 	matriz = numpy.loadtxt(nombre, delimiter="\t")
-
-	print(matriz)
+	return matriz
 			
 def all_pairs(lst):
     if len(lst) < 2:
@@ -39,7 +37,7 @@ def all_pairs(lst):
             yield [pair] + rest
 
 def main():
-	cargaDatos()
+	ciudades,matriz = cargaDatos()
 	
 	i = 0
 
@@ -48,12 +46,21 @@ def main():
 	for equipos in all_pairs(ciudades):
 		lst = list(itertools.product([0, 1], repeat=12))
 		for creador in lst:
-			calendario = Calendario(creador,equipos)			
-			if calendario.es_valido():
+			calendario = Calendario(creador,equipos,i)			
+			if calendario.es_valido():				
+				calendario.generar_resultados(matriz)				
 				calendarios.append(calendario)
-				print(calendario.imprimir_calendario())
 				i = i+1
 
+	calendarios.sort(key=lambda x: x.total)
+
+	workbook = xlsxwriter.Workbook('distancia.xlsx')	
+		
+	for calendario in calendarios:
+		worksheet = workbook.add_worksheet()
+		calendario.imprime_resultado(workbook,worksheet,ciudades)
+	
+	workbook.close()
 	print('Total calendario:'+str(i))
 	
 		
