@@ -38,7 +38,7 @@ def all_pairs(lst):
 
 def main():
 	ciudades,matriz = cargaDatos()
-	
+
 	i = 0
 
 	calendarios=[]
@@ -52,13 +52,24 @@ def main():
 				calendarios.append(calendario)
 				i = i+1
 
-	calendarios.sort(key=lambda x: x.total)
+	calendarios.sort(key=lambda x: x.desviacion)
 
-	workbook = xlsxwriter.Workbook('distancia.xlsx')	
+	workbook = xlsxwriter.Workbook('desviacion.xlsx')	
 		
+	i = 1
 	for calendario in calendarios:
-		worksheet = workbook.add_worksheet()
+		nombre = 'Opcion '+ str(i)
+		
+		for equipos in calendario.partidos:
+			if ciudades[0] in equipos and ciudades[5] in equipos:
+				for equipos1 in calendario.partidos:
+					if ciudades[1] in equipos1 and ciudades[4] in equipos1:
+						for equipos2 in calendario.partidos:
+							if ciudades[2] in equipos2 and ciudades[3] in equipos2:
+								nombre = nombre + 'Respeta ranking'
+		worksheet = workbook.add_worksheet(nombre)
 		calendario.imprime_resultado(workbook,worksheet,ciudades)
+		i = i+1
 	
 	workbook.close()
 	print('Total calendario:'+str(i))

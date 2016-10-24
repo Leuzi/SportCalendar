@@ -81,14 +81,14 @@ class Calendario():
 		
 	def imprime_resultado(self,workbook,worksheet,ciudades):
 		
-		worksheet.set_column(0, 0, 30)	
-		worksheet.set_column(1, 1, 10)	
-		worksheet.set_column(2, 2, 10)	
-		worksheet.set_column(3, 3, 20)	
-		worksheet.set_column(4, 4, 20)	
-		worksheet.set_column(5, 5, 10)	
-		worksheet.set_column(6, 6, 20)	
-		worksheet.set_column(7, 7, 10)	
+		worksheet.set_column(0, 0, 22)	
+		worksheet.set_column(1, 1, 18)	
+		worksheet.set_column(2, 2, 18)	
+		worksheet.set_column(3, 3, 18)	
+		worksheet.set_column(4, 4, 18)	
+		worksheet.set_column(5, 5, 18)	
+		worksheet.set_column(6, 6, 18)	
+		worksheet.set_column(7, 7, 18)	
 		
 
 		bold = workbook.add_format({'bold': True})
@@ -96,17 +96,29 @@ class Calendario():
 		bold.set_font_size(14)
 		bold.set_bg_color('00cc00')
 		
-		worksheet.write(1,0,'Enfrentamientos dobles',bold)
+		worksheet.write(0,0,'Enfrentamientos',bold)
 		
-		i = 3
-		for equipo1,equipo2 in self.partidos:
-			worksheet.write(i,0,equipo1.nombre+'-'+equipo2.nombre)
-			i = i+1		
+		filaActual = 3
+		for i in range(6):
+			worksheet.write(1,i,ciudades[i].nombre,bold)
+			posicion = 0
+			for j in range(6):				
+				if i is not j:
+					if self.calendario[i][j] == 2:
+						enfrentamiento = 'Doble vs '
+					elif self.calendario[i][j] == 0:
+						enfrentamiento = 'Casa vs '
+					else:
+						enfrentamiento = 'Fuera vs '
+					enfrentamiento = enfrentamiento + ciudades[j].nombre			
+					worksheet.write(2+posicion,i,enfrentamiento)		
+					posicion = posicion +1				
+			filaActual = filaActual+1		
 		
-		worksheet.write(6,7,'Dist Km')
+		
 
-		filaActual = i+2		
-		
+		filaActual = filaActual+2		
+		worksheet.write(filaActual-1,7,'Dist Km')
 		title = workbook.add_format({'bold':True})
 		title.set_bg_color('000000')
 		title.set_font_size(11)
@@ -122,11 +134,11 @@ class Calendario():
 					worksheet.write(filaActual+i,j+1,self.distancias[i][j])
 			worksheet.write(filaActual+i,7,self.distanciasEquipos[i])
 
-		worksheet.write(15,0,'Media por equipo',bold)
-		worksheet.write(15,1,str(round(self.media,2))+' kms')		
-		worksheet.write(16,0,'Kkm entre todos los equipos',bold)
-		worksheet.write(16,1,str(self.total)+' kms')	
-		worksheet.write(17,0,'Desviacion',bold)
-		worksheet.write(17,1,str(self.desviacion)+' kms')	
+		worksheet.write(17,0,'Media por equipo',bold)
+		worksheet.write(17,1,str(round(self.media,2))+' kms')		
+		worksheet.write(18,0,'Klm entre todos',bold)
+		worksheet.write(18,1,str(self.total)+' kms')	
+		worksheet.write(19,0,'Desviacion',bold)
+		worksheet.write(19,1,str(self.desviacion)+' kms')	
 
 
