@@ -4,7 +4,7 @@ import xlsxwriter
 import algoritmoTresEquipos
 import algoritmoCuatroEquipos
 import algoritmoCincoEquipos
-import AlgoritmoSeisEquipos
+import algoritmoSeisEquipos
 import algoritmoSieteEquipos
 import algoritmoOchoEquipos
 

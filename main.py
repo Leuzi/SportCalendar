@@ -1,79 +1,43 @@
+# -*- coding: utf-8 -*-
 from Equipos import Equipo
 from Calendario import Calendario
 import numpy
-import itertools
+from itertools import combinations
 import xlsxwriter
 
 def cargaDatos():
 
 	#Abrimos el archivo que contiene los datos
 
-	ciudades = cargaCiudades('datos')
 	matriz = cargaMatriz('costes')
+	ciudades = cargaEquipos('datos',matriz)
+	
 	return ciudades,matriz
 
-def cargaCiudades(nombre):
+def cargaEquipos(nombre,matriz):
 
-	ciudades = []
+	equipos = []
 	archivo = open(nombre,"r")
 
-	for i in range(6):
-		nombre,indice= archivo.readline().split('\t')
-		ciudades.append(Equipo(nombre,indice))
-	return ciudades
+	for i in range(8):
+		nombre,iniciales,indice= archivo.readline().split('\t')
+		equipos.append(Equipo(nombre,iniciales,indice))
+	return equipos
 
 def cargaMatriz(nombre):
-	matriz = numpy.loadtxt(nombre, delimiter="\t")
-	return matriz
+	distancias = numpy.loadtxt(nombre, delimiter="\t")
+	return distancias
 			
-def all_pairs(lst):
-    if len(lst) < 2:
-        yield lst
-        return
-    a = lst[0]
-    for i in range(1,len(lst)):
-        pair = (a,lst[i])
-        for rest in all_pairs(lst[1:i]+lst[i+1:]):
-            yield [pair] + rest
-
 def main():
-	ciudades,matriz = cargaDatos()
-
-	i = 0
-
-	calendarios=[]
-		
-	for equipos in all_pairs(ciudades):
-		lst = list(itertools.product([0, 1], repeat=12))
-		for creador in lst:
-			calendario = Calendario(creador,equipos,i)			
-			if calendario.es_valido():				
-				calendario.generar_resultados(matriz)				
-				calendarios.append(calendario)
-				i = i+1
-
-	calendarios.sort(key=lambda x: x.desviacion)
-
-	workbook = xlsxwriter.Workbook('desviacion.xlsx')	
-		
-	i = 1
-	for calendario in calendarios:
-		nombre = 'Opcion '+ str(i)
-		
-		for equipos in calendario.partidos:
-			if ciudades[0] in equipos and ciudades[5] in equipos:
-				for equipos1 in calendario.partidos:
-					if ciudades[1] in equipos1 and ciudades[4] in equipos1:
-						for equipos2 in calendario.partidos:
-							if ciudades[2] in equipos2 and ciudades[3] in equipos2:
-								nombre = nombre + 'Respeta ranking'
-		worksheet = workbook.add_worksheet(nombre)
-		calendario.imprime_resultado(workbook,worksheet,ciudades)
-		i = i+1
+	equipos,distancias = cargaDatos()
 	
-	workbook.close()
-	print('Total calendario:'+str(i))
-	
+	for equipo in equipos:
+		equipo.ponDistancias(equipos,distancias)
+		
+	for i in range(3,8):
+		set = list(combinations(equipos,i))
+		for equipos in set:
+			print(Calendario(equipos))
 		
 if __name__ == "__main__":
 
