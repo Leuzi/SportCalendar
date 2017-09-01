@@ -7,9 +7,6 @@ class Equipo():
 	
 	def __str__(self):
 		result = self.nombre + '\n'
-		for equipo,distancia in self.distancias.items():
-			result = result + equipo.nombre + ':' + str(distancia) + '\n'
-			
 		return result
 	
 	def ponDistancias(self,equipos,distancias):

@@ -37,7 +37,7 @@ def main():
 	for i in range(3,8):
 		set = list(combinations(equipos,i))
 		for equipos in set:
-			print(Calendario(equipos))
+			Calendario(equipos)
 		
 if __name__ == "__main__":
 
