@@ -1,8 +1,9 @@
-Fuengirola Potros	POT	0
-Granada Lions	LIO	1
-Almería Barbarians	BAR	2
-Aljarafe Blue Devils	DEV	3
-Sevilla Linces	LIN	4
-Córdoba Golden Bulls	BUL	5
-El puerto Seagulls	SEA	6
-Málaga Corsarios	COR	7
+Amontillate Circus	CIR	MON	0
+Fuengirola Potros	POT	MAL	1
+Granada Lions Open	LIO	GRA	2
+Granada Lions Femenino	LIF	GRA	3
+Córdoba Golden Bulls	GBO	COR	4
+Córdoba Golden Bulls Femenino	GBF	COR	5
+Aljarafe Blue Devils	DEV	ALJ	6
+Sevilla Linces	LIN	SEV	7
+El puerto Seagulls	SEA	ELP	8
