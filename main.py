@@ -4,26 +4,27 @@ from Calendario import Calendario
 import numpy
 import itertools
 import xlsxwriter
+from collections import Counter
 
 def cargaDatos():
 
 	#Abrimos el archivo que contiene los datos
 
-	ciudades = cargaCiudades('datos')
+	equipos = cargaEquipos('datos')
 	matriz = cargaMatriz('costes')
-	return ciudades,matriz
+	return equipos,matriz
 
-def cargaCiudades(nombre):
+def cargaEquipos(nombre):
 
-	ciudades = []
+	equipos = []
 	archivo = open(nombre,"r", encoding='utf-8')
 
-	for i in range(6):
-		nombre,iniciales,indice= archivo.readline().split('\t')
+	for i in range(9):
+		nombre,iniciales,ciudad,indice= archivo.readline().split('\t')
 		print(nombre)
-		ciudades.append(Equipo(nombre,iniciales,indice))
+		equipos.append(Equipo(nombre,iniciales,ciudad,indice))
 		
-	return ciudades
+	return equipos
 
 def cargaMatriz(nombre):
 	matriz = numpy.loadtxt(nombre, delimiter="\t")
@@ -39,14 +40,29 @@ def all_pairs(lst):
         for rest in all_pairs(lst[1:i]+lst[i+1:]):
             yield [pair] + rest
 
+def generaGrupos(equipos):
+	
+	grupos = []
+	
+	combinations = itertools.combinations(equipos,5)
+	for combination in combinations:
+		Counter(getattr(team, 'ciudad') for team in combination))
+		
+		grupos.append((list(combination), list(set(equipos) - set(combination))))
+	
+	return grupos
+	
 def main():
-	ciudades,matriz = cargaDatos()
+	equipos,matriz = cargaDatos()
 
 	i = 0
+	
+	grupos = generaGrupos(equipos);
+	print(grupos);
 
 	calendarios=[]
 		
-	for equipos in all_pairs(ciudades):
+	for equipos in all_pairs(equipos):
 		lst = list(itertools.product([0, 1], repeat=12))
 		for creador in lst:
 			calendario = Calendario(creador,equipos,i)			
