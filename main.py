@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from Equipos import Equipo
+from Grupo import Grupo
 from Calendario import Calendario
 import numpy
 import itertools
@@ -21,7 +22,6 @@ def cargaEquipos(nombre):
 
 	for i in range(9):
 		nombre,iniciales,ciudad,indice= archivo.readline().split('\t')
-		print(nombre)
 		equipos.append(Equipo(nombre,iniciales,ciudad,indice))
 		
 	return equipos
@@ -40,26 +40,45 @@ def all_pairs(lst):
         for rest in all_pairs(lst[1:i]+lst[i+1:]):
             yield [pair] + rest
 
-def generaGrupos(equipos):
+def generaGruposConCalendarioConEquipos(equipos):
 	
-	grupos = []
+	calendarios = []
+	print("Equipos")
+	print(equipos)
 	
-	combinations = itertools.combinations(equipos,5)
-	for combination in combinations:
-		Counter(getattr(team, 'ciudad') for team in combination))
+	divisiones = list(itertools.combinations(equipos.__iter__(),5))
+	print("Divisiones")
+	print(str(len(divisiones)))
+	
+	calendarios = set()
+	for grupo in divisiones:
+		"""
+		print(grupo)
+		print(Counter(getattr(recuento, 'ciudad') for recuento in grupo))
+		"""
+		concentraciones = Counter(getattr(recuento, 'ciudad') for recuento in grupo)  
 		
-		grupos.append((list(combination), list(set(equipos) - set(combination))))
+		if concentraciones['GRA'] is 1 and concentraciones['COR'] is 1 :
+				for calendario in itertools.permutations(grupo):
+					calendarios.add(Grupo(calendario, set(equipos)-set(calendario)))
+					
+	print("Un total de " +str(len(calendarios)) +" calendarios unicos")
+	print(list(calendarios)[0:5])
 	
-	return grupos
+	return list(calendarios)
 	
 def main():
 	equipos,matriz = cargaDatos()
 
 	i = 0
 	
-	grupos = generaGrupos(equipos);
-	print(grupos);
-
+	grupos = generaGruposConCalendarioConEquipos(list(equipos));
+	print(grupos)
+	"""print(grupos);
+	"""
+	
+	
+	
 	calendarios=[]
 		
 	for equipos in all_pairs(equipos):
