@@ -63,8 +63,9 @@ def generaGruposConCalendarioConEquipos(equipos):
 					calendarios.add(Grupo(calendario, set(equipos)-set(calendario)))
 					
 	print("Un total de " +str(len(calendarios)) +" calendarios unicos")
+	"""
 	print(list(calendarios)[0:5])
-	
+	"""
 	return list(calendarios)
 	
 def main():
@@ -73,40 +74,25 @@ def main():
 	i = 0
 	
 	grupos = generaGruposConCalendarioConEquipos(list(equipos));
-	print(grupos)
+	
+	print(str(len(grupos)))
 	"""print(grupos);
 	"""
-	
-	
-	
-	calendarios=[]
 		
-	for equipos in all_pairs(equipos):
-		lst = list(itertools.product([0, 1], repeat=12))
-		for creador in lst:
-			calendario = Calendario(creador,equipos,i)			
-			if calendario.es_valido():				
-				calendario.generar_resultados(matriz)				
-				calendarios.append(calendario)
-				i = i+1
+	calendarios = Calendario(grupos,matriz)			
+	calendarios.generar_calendario()
+	i = i+1
 
-	calendarios.sort(key=lambda x: x.total)
+	calendarios.grupos.sort(key=lambda x: x.desviacion)
 
-	workbook = xlsxwriter.Workbook('total.xlsx')	
+	workbook = xlsxwriter.Workbook('desviacion.xlsx')	
 		
 	i = 1
-	for calendario in calendarios:
+	for calendario in calendarios.grupos[:500]:
 		nombre = 'Opcion '+ str(i)
 		
-		for equipos in calendario.partidos:
-			if ciudades[0] in equipos and ciudades[5] in equipos:
-				for equipos1 in calendario.partidos:
-					if ciudades[1] in equipos1 and ciudades[4] in equipos1:
-						for equipos2 in calendario.partidos:
-							if ciudades[2] in equipos2 and ciudades[3] in equipos2:
-								nombre = nombre + 'Respeta ranking'
 		worksheet = workbook.add_worksheet(nombre)
-		calendario.imprime_resultado(workbook,worksheet,ciudades)
+		calendario.imprime_resultado(workbook,worksheet)
 		i = i+1
 	
 	workbook.close()
