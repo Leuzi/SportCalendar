@@ -20,7 +20,7 @@ def cargaEquipos(nombre):
 	equipos = []
 	archivo = open(nombre,"r", encoding='utf-8')
 
-	for i in range(4):
+	for i in range(10):
 		nombre,iniciales,ciudad,indice= archivo.readline().split('\t')
 		equipos.append(Equipo(nombre,iniciales,ciudad,indice))
 		
@@ -29,42 +29,38 @@ def cargaEquipos(nombre):
 def cargaMatriz(nombre):
 	matriz = numpy.loadtxt(nombre, delimiter="\t")
 	return matriz
-
-
-def generaGruposConCalendarioConEquipos(equipos):
 	
-	calendarios = []
-	print("Equipos")
-	print(equipos)
+def equiposRepetido(grupo):
+	ciudades = set()
 	
-	calendario = list(itertools.permutations(equipos.__iter__(),4))
-	print("Calendarios")
-	print(str(len(calendario)))
-	
-	
-	for equipos_ordenados in calendario:
-		print(equipos_ordenados)
-		calendarios.append(Grupo(equipos_ordenados))
-					
-	print("Un total de " +str(len(calendario)) +" calendarios unicos")
-	"""
-	print(list(calendarios)[0:5])
-	"""
-	return list(calendarios)
+	for equipo in grupo:
+		ciudades.add(equipo.ciudad)
+	return  not(len(ciudades) == len(grupo))
 	
 def main():
 	equipos,costes = cargaDatos()
 
+	grupos = []
+	
+	for grupo in itertools.permutations(equipos,10):
+		grupoA = grupo[0:5]
+		grupoB = grupo[5:10]
+		
+		if not (equiposRepetido(grupoA)) and not (equiposRepetido(grupoB)):
+			grupos.append([grupoA,grupoB])
+		
+	
+	
 	i = 0
 	
-	grupos = generaGruposConCalendarioConEquipos(list(equipos));
 	
-	print(str(len(grupos)))
 	"""print(grupos);
 	"""
-		
-	calendarios = Calendario(grupos,costes)			
-	calendarios.generar_calendario()
+	calendarios = []
+	for grupo in grupos:	
+		calendario = Calendario(grupo,costes)			
+		calendario.generar_calendario()
+		calendarios.append(calendario)
 	i = i+1
 
 	calendarios.grupos.sort(key=lambda x: x.desviacion)
