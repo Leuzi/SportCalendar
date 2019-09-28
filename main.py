@@ -7,6 +7,8 @@ import itertools
 import xlsxwriter
 from collections import Counter
 import sys
+import math
+import matplotlib.pyplot as plt
 
 def cargaDatos(datos,costes):
 
@@ -21,7 +23,7 @@ def cargaEquipos(nombre):
 	equipos = []
 	archivo = open(nombre,"r", encoding='utf-8')
 
-	for i in range(10):
+	for i in range(12):
 		nombre,iniciales,ciudad,indice= archivo.readline().split('\t')
 		equipos.append(Equipo(nombre,iniciales,ciudad,indice))
 		
@@ -38,61 +40,125 @@ def equiposRepetido(grupo):
 		ciudades.add(equipo.ciudad)
 	return  not(len(ciudades) == len(grupo))
 	
+def findTeams(combination):
+	
+	cordoba = None
+	malaga = None
+	
+	for i in range(len(combination)):
+		if combination[i].iniciales == 'COR':
+			malaga = i
+		if combination[i].iniciales == 'BUF':
+			cordoba = i
+	values = list([malaga,cordoba])
+	values.sort()
+	
+	print(values)
+	
+	return values
+	
+def combinacionPosible(combinationA):
+	validCombinations = [[0,1],[0,3],[0,4],[1,2],[1,5],[2,3],[2,4],[3,5],[4,5]]
+	"""
+	teams=findTeams(combinationA)
+	valid = False
+	
+	for combination in validCombinations:
+		if combination[0] == teams[0]:
+			if combination[1] == teams[1]:
+				valid=True
+	print(valid)
+	return valid
+	"""
+	return True	
+	
 def main():
 	
 	equipos,costes = cargaDatos(sys.argv[1],sys.argv[2])
+	grupos = list()
+	grupoA = list()
+	grupoA.append(equipos[0])
+	grupoA.append(equipos[3])
+	grupoA.append(equipos[5])
+	grupoA.append(equipos[8])
+	grupoA.append(equipos[9])
+	grupoA.append(equipos[10])
+	grupoB = list()
+	grupoB.append(equipos[1])
+	grupoB.append(equipos[2])
+	grupoB.append(equipos[3])
+	grupoB.append(equipos[6])
+	grupoB.append(equipos[7])
+	grupoB.append(equipos[11])
 
-	grupos = [equipos[0],
-	equipos[1],
-	equipos[2],
-	equipos[3],
-	equipos[5],
-	equipos[6],
-	equipos[7],
-	equipos[9]]
+	grupos.append([grupoA,grupoB])
 	
 	gruposPosibles = []
 	
-	for posi in itertools.permutations(grupos,4):
-		grupoA = list(posi)
-		grupoB = [x for x in grupos if x not in grupoA]
-		grupoA.append(equipos[4])
-		
-		grupoB.append(equipos[8])
+	i=0
+	for posi in grupos:
 	
+		grupoA = posi[0]
+		grupoB = posi[1]
+		
+		
 		print("GrupoA")
 		print(grupoA)
 		print("GrupoB")
 		print(grupoB)
 		
-		combinationsA = itertools.permutations(grupoA,5)
-		combinationsB = itertools.permutations(grupoB,5)
-		for combinationA in combinationsA:
-			for combinationB in combinationsB:
-				print(combinationA)
-				print(combinationB)
-				gruposPosibles.append([combinationA,combinationB])
-	
-	
-	
+		combinationsA = itertools.permutations(list(grupoA),6)
+		combinationsB = itertools.permutations(list(grupoB),6)
+		
+		for combinationA in list(combinationsA):
+			if(i%1000000 == 0):
+				print(i)
+			i = i+1
+			"""
+			print(combinationB)
+			"""
+			if combinacionPosible(combinationA):
+				"""
+				print(combinacionPosible(combinationB))
+				"""
+				for combinationB in list(combinationsB):
+					"""
+					print(combinationA)
+					print(combinationB)
+					"""
+					gruposPosibles.append([combinationA,combinationB])
+
 	i = 0
 	
-	
-	"""print(grupos);
-	"""
+	print("Calendarios posibles "+str(len(gruposPosibles)))
 	calendarios = []
 	for grupo in gruposPosibles:	
+		
 		print("calendario numero" + str(i))
+		
 		calendario = Calendario(grupo,costes)			
 		calendario.generar_calendario()
 		calendarios.append(calendario)
 		i = i+1
-
+	
+	calendarios.sort(key=lambda x: x.desviacion)
+	minDesviacion = calendarios[0].desviacion
+	maxDesviacion = calendarios[-1].desviacion
 	calendarios.sort(key=lambda x: x.total)
+	minKilometros = calendarios[0].total
+	maxKilometros = calendarios[-1].total
+	
+	for calendario in calendarios:
+		calendario.calculaIndice(minDesviacion,maxDesviacion,minKilometros,maxKilometros)
 
-	workbook = xlsxwriter.Workbook('total.xlsx')	
+
+	calendarios.sort(key=lambda x: (x.desviacion))
+	
+	workbook = xlsxwriter.Workbook('desviacionSinRestriccion.xlsx')	
 		
 	i = 1
+	
+	
 	for calendario in calendarios[:500]:
 		nombre = 'Opcion '+ str(i)
 		
@@ -102,6 +168,12 @@ def main():
 	
 	workbook.close()
 	print('Total calendario:'+str(i))
+	
+	print('Plotting:')
+	
+	plt.plot( [x.indiceDesviacion for x in calendarios], [ y.indiceTotal for y in calendarios], 'ro')
+	plt.ylabel('some numbers')
+	plt.show()
 	
 		
 if __name__ == "__main__":
